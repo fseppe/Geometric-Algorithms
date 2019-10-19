@@ -1,3 +1,5 @@
 *.pdf
 .ipynb_checkpoints
 teste
+__pycacge__*
+.*
