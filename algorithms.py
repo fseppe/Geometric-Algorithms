@@ -19,3 +19,31 @@ def graham_scan(pontos):
         pilha.append(ponto)
     
     return pilha
+
+
+def jarvis_march(pontos):
+    
+    convex_hull = []
+    
+    min_index = getIndexMin(pontos)
+    
+    i = min_index
+    convex_hull.append(pontos[i])
+    
+    while True:
+        curr_p = (i + 1) % len(pontos)
+        
+        for j in range(len(pontos)):
+            if i != j:
+                angulo = calc_orientacao(pontos[i], pontos[j], pontos[curr_p])
+              
+                if angulo > 0:
+                    curr_p = j
+                elif angulo == 0 and calc_dist(pontos[j], pontos[i]) > calc_dist(pontos[curr_p], pontos[i]):
+                    curr_p = j
+        i = curr_p
+        if i == min_index:
+            break
+        convex_hull.append(pontos[curr_p])
+    
+    return convex_hull
