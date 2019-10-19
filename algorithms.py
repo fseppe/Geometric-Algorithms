@@ -47,3 +47,50 @@ def jarvis_march(pontos):
         convex_hull.append(pontos[curr_p])
     
     return convex_hull
+
+def incremental(points):
+    s = sorted(points, key = lambda p: p[0])
+    
+    n = {} # vetor q guarda os indices dos pontos acima (em relacao ao eixo y) do ponto mais a direita
+    p = {} # vetor q guarda os indices dos pontos abaixo (em relacao ao eixo y)
+    
+    n[0], p[0], n[1], p[1] = 1, 1, 0, 0
+    
+    hull = []
+    hull.append(s[0])
+    hull.append(s[1])
+    
+    for i in range(2, len(s)):
+        hull.append(s[i])
+        
+        if s[i][y] > s[i-1][y]:
+            n[i] = i-1
+            p[i] = p[i-1]
+        else:
+            n[i] = n[i-1]
+            p[i] = i-1
+        
+        n[p[i]] = i
+        p[n[i]] = i
+        
+        n_1, n_2 = n[i], n[n[i]]
+        while orientation_consec(s[i], s[n_1], s[n_2]) > 0:
+            n[i] = n_2
+            p[n_2] = i
+            
+            hull = [p for p in hull if p != s[n_1]]
+            
+            n_1 = n_2
+            n_2 = p[n_1]
+            
+        p_1, p_2 = p[i], p[p[i]]
+        while orientation_consec(s[i], s[p_2], s[p_1]) > 0:
+            p[i] = p_2
+            n[p_2] = i
+            
+            hull = [p for p in hull if p != s[p_1]]
+            
+            p_1 = p_2
+            p_2 = n[p_1]
+            
+    return hull
